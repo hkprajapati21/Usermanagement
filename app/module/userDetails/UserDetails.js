@@ -12,6 +12,7 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const UserDetails = () => {
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [userName, setUserName] = useState('');
@@ -21,7 +22,7 @@ const UserDetails = () => {
 
     return (
         <View style={styles.mainLayout}>
-            <Text>UserDetails</Text>
+            <Text style={styles.titleText}>UserDetails</Text>
             <View>
                 <View>
                     <Text style={styles.labelText}>Name</Text>
@@ -116,11 +117,11 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontFamily: 'OpenSans-SemiBold',
         textAlign: 'center',
-        padding:10
+        padding: 10
     },
-    btnView:{
-        width:SCREEN_WIDTH/2-10,
-        backgroundColor:"#495bde",
-        borderRadius:10
+    btnView: {
+        width: SCREEN_WIDTH / 2 - 10,
+        backgroundColor: "#495bde",
+        borderRadius: 10
     }
 });

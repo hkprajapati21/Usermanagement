@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { FlatList, TouchableOpacity, StyleSheet, View, Image, Text,Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
+import { FlatList, TouchableOpacity, StyleSheet, View, Image, Text, Dimensions } from 'react-native';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const UserList = ({navigation}) => {
+
+const PostScreen = ({navigation}) => {
 
     const [userData, setUserData] = useState(null);
     const fetchUserData = () => {
-        fetch('https://jsonplaceholder.typicode.com/users',
+        fetch('https://jsonplaceholder.typicode.com/posts',
             {
                 method: 'GET', // or 'PUT'
                 headers: {
@@ -28,72 +27,95 @@ const UserList = ({navigation}) => {
                 console.log(err);
             })
     }
+
+    const Delete = (id) => {
+        // local storage Delete logic
+        let newArray = userData.filter((item)=>{
+            return item.id !== id;
+        }); 
+        setUserData(newArray);
+        // this link is not working
+        fetch('https://jsonplaceholder.typicode.com/posts/' + id, {
+            method: 'DELETE',
+        }).then((res)=>res.json())
+        .then((res)=>{
+            console.log(" Item Deleted");
+            console.log(res)
+        }).catch((err)=>{
+            console.log(err)
+        }
+        )
+    }
+
+    const Edit = (id) => {
+        navigation.navigate("EditPost",{
+            data:id
+        });
+       
+    }
+    const view_details = (id) => {
+        navigation.navigate("EditPost",{
+            data:id
+        });
+       
+    }
     useEffect(() => {
         fetchUserData();
     }, []);
-   
     return (
         <View style={styles.mainLayout}>
             <FlatList
-                style={{ flex: 1 }}
                 data={userData}
                 keyExtractor={item => {
                     return item.id;
                 }}
-
-
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={() => {
-                    return (
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={styles.titleText}>List Of Users</Text>
-                            <TouchableOpacity style={styles.btnView}
-                            onPress={()=>{
-                                navigation.navigate("PostScreen");
-                            }}>
-                                <Text style={styles.btnText}>Post</Text>
-                            </TouchableOpacity>
-                        </View>
-                    );
+                    return <Text style={styles.titleText}>Post</Text>;
                 }}
                 renderItem={({ item, index }) => {
                     return (
                         <View style={styles.listView}>
                             <View >
                                 <View>
-                                    <Text style={styles.labelText}>Username</Text>
-                                    <Text style={styles.regText}>{item.username}</Text>
+                                    <Text style={styles.labelText}>Title</Text>
+                                    <Text style={styles.regText}>{item.title}</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.labelText}>Body</Text>
+                                    <Text style={styles.regText}>{item.body}</Text>
                                 </View>
 
-                                <View>
-                                    <Text style={styles.labelText}>Company Name</Text>
-                                    <Text style={styles.regText}>{item.company.name}</Text>
-                                </View>
-                                <View>
-                                    <Text style={styles.labelText}>Phone</Text>
-                                    <Text style={styles.regText}>{item.phone}</Text>
-                                </View>
                             </View>
                             <View style={styles.rowAction}>
                                 <TouchableOpacity
+                                 onPress={()=>{
+                                    Edit(item);
+                                }}
                                     style={styles.imageButtonView}>
                                     <Image
                                         style={styles.imageIconStyle}
-                                        source={require('../../assets/Edit.png')}
+                                        source={require('../assets/Edit.png')}
                                     />
                                 </TouchableOpacity>
                                 <TouchableOpacity
+                                onPress={()=>{
+                                    Delete(item.id);
+                                }}
                                     style={styles.imageButtonView}>
                                     <Image
                                         style={styles.imageIconStyle}
-                                        source={require('../../assets/Delete.png')}
+                                        source={require('../assets/Delete.png')}
                                     />
                                 </TouchableOpacity>
                                 <TouchableOpacity
+                                   onPress={()=>{
+                                    view_details(item);
+                                }}
                                     style={styles.imageButtonView}>
                                     <Image
                                         style={styles.imageIconStyle}
-                                        source={require('../../assets/eye_ope.png')}
+                                        source={require('../assets/eye_ope.png')}
                                     />
                                 </TouchableOpacity>
                             </View>
@@ -104,7 +126,7 @@ const UserList = ({navigation}) => {
         </View>
     );
 };
-export default UserList;
+export default PostScreen;
 
 const styles = StyleSheet.create({
     mainLayout: {
@@ -125,7 +147,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         shadowColor: '#000',
         elevation: 3,
-        flexDirection: "row",
+        //  flexDirection:"row",
         justifyContent: "space-between",
         alignItems: "center",
 
@@ -153,6 +175,7 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     rowAction: {
+
         justifyContent: "space-between",
         flexDirection: "row",
         alignItems: "center",

@@ -26,6 +26,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import UserList from './app/module/userList/UserList';
+import AppNavigation from './app/navigation/AppNavigation';
 
 
 
@@ -36,7 +37,7 @@ const App  = () => {
 
   return (
     <>
-    <UserList/>
+   <AppNavigation/>
    </>
 
   );
