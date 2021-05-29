@@ -1,39 +1,72 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { FlatList, TouchableOpacity, StyleSheet, View, Image, Text,Dimensions } from 'react-native';
+import { FlatList, TouchableOpacity, StyleSheet, View, Image, Text, Dimensions, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const UserList = ({navigation}) => {
+const UserList = ({ navigation }) => {
 
-    const [userData, setUserData] = useState(null);
-    const fetchUserData = () => {
-        fetch('https://jsonplaceholder.typicode.com/users',
-            {
-                method: 'GET', // or 'PUT'
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'multipart/form-data'
-                },
-            }
-        )
-            .then((res) =>
-                res.json()
-            ).then((response) => {
-                console.log(response);
-                setUserData(response);
-            }).catch((err) => {
-                console.log(err);
-            })
+    const [userData, setUserData] = useState([]);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState();
+    
+    const editData =(item) =>{
+        setTitle(item.title);
+        setDescription(item.description);
+
+      let editarray=  userData.filter ((data)=>{
+           
+        if(data.title ===  item.title)
+        {
+            return data.item;
+        }
+         });
+
+      
+
     }
+    const deleteData =(item) =>{
+
+    let  newArray = userData.filter((data)=>{
+            return item.title !== data.title;
+        });
+
+        setUserData(newArray);
+    }
+
     useEffect(() => {
-        fetchUserData();
-    }, []);
-   
+       // fetchUserData();
+    }, [userData]);
+
     return (
         <View style={styles.mainLayout}>
+            <View>
+                <TextInput
+                    placeholder="Enter title"
+                    value={title}
+                    onChangeText={(text) => { setTitle(text) }}
+                    keyboardType="default" />
+                <TextInput
+                    placeholder="Enter Description"
+                    value={description}
+                    onChangeText={(text) => { setDescription(text) }}
+                    keyboardType="default" />
+
+                <TouchableOpacity style={styles.btnView}
+                    onPress={() => {
+                    
+                    //  console.log("daat",formData);
+
+                     userData.push({
+                         "title":title,
+                         "description":description
+                     });
+                    }}>
+                    <Text style={styles.btnText}>Add</Text>
+                </TouchableOpacity>
+            </View>
             <FlatList
                 style={{ flex: 1 }}
                 data={userData}
@@ -47,12 +80,12 @@ const UserList = ({navigation}) => {
                     return (
                         <View style={{ flexDirection: "row" }}>
                             <Text style={styles.titleText}>List Of Users</Text>
-                            <TouchableOpacity style={styles.btnView}
-                            onPress={()=>{
-                                navigation.navigate("PostScreen");
-                            }}>
+                            {/* <TouchableOpacity style={styles.btnView}
+                                onPress={() => {
+                                    navigation.navigate("PostScreen");
+                                }}>
                                 <Text style={styles.btnText}>Post</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
                     );
                 }}
@@ -61,21 +94,21 @@ const UserList = ({navigation}) => {
                         <View style={styles.listView}>
                             <View >
                                 <View>
-                                    <Text style={styles.labelText}>Username</Text>
-                                    <Text style={styles.regText}>{item.username}</Text>
+                                    <Text style={styles.labelText}>Title</Text>
+                                    <Text style={styles.regText}>{item.title}</Text>
                                 </View>
 
                                 <View>
-                                    <Text style={styles.labelText}>Company Name</Text>
-                                    <Text style={styles.regText}>{item.company.name}</Text>
+                                    <Text style={styles.labelText}>Description</Text>
+                                    <Text style={styles.regText}>{item.description}</Text>
                                 </View>
-                                <View>
-                                    <Text style={styles.labelText}>Phone</Text>
-                                    <Text style={styles.regText}>{item.phone}</Text>
-                                </View>
+                               
                             </View>
                             <View style={styles.rowAction}>
                                 <TouchableOpacity
+                                onPress={()=>{
+                                    editData(item);
+                                }}
                                     style={styles.imageButtonView}>
                                     <Image
                                         style={styles.imageIconStyle}
@@ -83,19 +116,23 @@ const UserList = ({navigation}) => {
                                     />
                                 </TouchableOpacity>
                                 <TouchableOpacity
+                                onPress={()=>{deleteData(item);}}
                                     style={styles.imageButtonView}>
                                     <Image
                                         style={styles.imageIconStyle}
                                         source={require('../../assets/Delete.png')}
                                     />
                                 </TouchableOpacity>
-                                <TouchableOpacity
+                                {/* <TouchableOpacity
+                                onPress={()=>{
+
+                                }}
                                     style={styles.imageButtonView}>
                                     <Image
                                         style={styles.imageIconStyle}
                                         source={require('../../assets/eye_ope.png')}
                                     />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                         </View>
                     );
